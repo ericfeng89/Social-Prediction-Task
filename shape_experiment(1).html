@@ -144,9 +144,7 @@
           if (multiple_choice_response == '{"Q0":"other"}') {
             return [{prompt: "Other:", rows:3}];
           }
-          else if (multiple_choice_response == '{"Q0":"up"}' || multiple_choice_response == '{"Q0":"down"}' || multiple_choice_response == '{"Q0":"left"}' || multiple_choice_response == '{"Q0":"right"}'){
-            return [{prompt: "Press 'continue' to see the actual result", rows:1, columns:1}];
-          }
+          return [{prompt: "Press 'continue' to see the actual result", rows:1, columns:1}];
         },
         data: {test_part: 'practice_other'}
       }
@@ -263,9 +261,7 @@
               if (multiple_choice_response == '{"Q0":"other"}') {
                 return [{prompt: "Other:", rows:3}];
               }
-              else if (multiple_choice_response == '{"Q0":"up"}' || multiple_choice_response == '{"Q0":"down"}' || multiple_choice_response == '{"Q0":"left"}' || multiple_choice_response == '{"Q0":"right"}'){
-                return [{prompt: "Press 'continue' to see the actual result", rows:1, columns:1}];
-              }
+              return [{prompt: "Press 'continue' to see the actual result", rows:1, columns:1}];
             },
             data: {test_part: 'other'}
           }
