@@ -14,70 +14,107 @@
     <body></body>
     <script>
 
-      /* create timeline */
-      var timeline = [];
+      // create timeline
+      let timeline = [];
 
       // assign a unique number to the participant
-      var enter_experiment_number = {
-        type: "survey-text",
-        questions: [{prompt: "Enter participant number:"}],
-        data: {test_part: 'experiment_number'}
-      }
-      timeline.push(enter_experiment_number);
+      let enter_participant_id = {
 
-      // project title
-      var welcome = {
+        // jsPsych specific: must enter the type of object
+        type: "survey-text",
+
+        // for "survey-text", there must be an array of questions in this format
+        questions: [{prompt: "Enter participant ID number (6 digits):"}],
+
+        // create an additional property with key "test_part" for easy access later
+        data: {test_part: 'participant_id'}
+      }
+      // pushes the object to the timeline
+      timeline.push(enter_participant_id);
+
+
+      // welcome user
+      let welcome = {
+
+        // html-keyboard-response allows the user to continue via key press
+        // by default user may press any key
         type: "html-keyboard-response",
-        stimulus: "<p>Project title: <p>" +
+
+        // stimulus is the text displayed on the screen, prompts user
+        stimulus: "<p>Project title: (social prediction) <p>" +
           "<p>Welcome to the experiment. Press any key to begin.<p>"
       };
       timeline.push(welcome);
 
       // give instructions to the experiment
-      var instructions = {
+      let instructions = {
         type: "html-keyboard-response",
         stimulus: "<p>In this experiment... (to be finished).</p>"+
-          "<p>Press any key to begin.</p>",
+          "<p>Press any key to continue.</p>",
       };
       timeline.push(instructions);
 
-      // creates fixation plus sign
-      var fixation = {
+      // create fixation plus sign
+      let fixation = {
         type: 'html-keyboard-response',
-        stimulus: '<p>+</p>',
-        choices: jsPsych.NO_KEYS,
+        stimulus: '<b>+</b>',
+
+        // the user may not press any keys to continue
+    //    choices: jsPsych.NO_KEYS,
+
+        // instead, the user must wait 2 seconds
         trial_duration: 2000,
         data: {test_part: 'fixation'}
       }
 
-      // creates screen right before beginning practice
-      var practice_proceed = {
+      // create screen right before beginning practice
+      let practice_proceed = {
         type: "html-keyboard-response",
         stimulus: "<p>This will be a practice round.</p>"+
           "<p>Press any key to continue.</p>"
       }
 
-      var practice_videos = [
-        "<iframe src='videos/bouncing_obs.mp4' width='640' height='360'></iframe>",
-        "<iframe src='videos/searching_obs.mp4' width='640' height='360'></iframe>"
+      // list of practice video links
+      let practice_videos = [
+        "<iframe src='videos/practice_social.mp4' width='600' height='360'></iframe>",
+        "<iframe src='videos/practice_pattern.mp4' width='600' height='360'></iframe>"
       ];
 
-      var practice_time_list = [
-        13000,
-        10000
+      // list of practice video times (in milliseconds)
+      // 1000 added to video length to compensate for video loading speed
+      let practice_time_list = [
+        7000,
+        8000
       ];
 
-      var obs = [
-        "<iframe src='videos/bouncing_obs.mp4' width='640' height='360'></iframe>",
-        "<iframe src='videos/bumping_obs.mp4' width='640' height='360'></iframe>",
-        "<iframe src='videos/ignoring_obs.mp4' width='640' height='360'></iframe>",
-        "<iframe src='videos/meeting_obs.mp4' width='640' height='360'></iframe>",
-        "<iframe src='videos/rounding_obs.mp4' width='640' height='360'></iframe>",
-        "<iframe src='videos/searching_obs.mp4' width='640' height='360'></iframe>"
+      // create list of numbers 0 to n
+      // this list will be randomized later
+      // randomized array to be used for shuffling video order
+      let unshuffled_array = [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
       ];
 
-      // 1000 added to video length
-      var obs_time_list = [
+      // call shuffle() function, value assigned to shuffled_array
+      let shuffled_array = shuffle(unshuffled_array);
+
+      // unshuffled list of test videos
+      let unshuffled_obs = [
+        "<iframe src='videos/bouncing_obs.mp4' width='600' height='360'></iframe>",
+        "<iframe src='videos/bumping_obs.mp4' width='600' height='360'></iframe>",
+        "<iframe src='videos/ignoring_obs.mp4' width='600' height='360'></iframe>",
+        "<iframe src='videos/meeting_obs.mp4' width='600' height='360'></iframe>",
+        "<iframe src='videos/rounding_obs.mp4' width='600' height='360'></iframe>",
+        "<iframe src='videos/searching_obs.mp4' width='600' height='360'></iframe>"
+      ];
+
+      // unshuffled list of test video times
+      // 1000 added to video length to compensate for video loading speed
+      let unshuffled_obs_time_list = [
         13000,
         4000,
         7000,
@@ -86,27 +123,30 @@
         10000
       ];
 
-
-      var social_feedback_videos = [
-        "<iframe src='videos/bouncing_social.mp4' width='640' height='360'></iframe>",
-        "<iframe src='videos/bumping_social.mp4' width='640' height='360'></iframe>",
-        "<iframe src='videos/ignoring_social.mp4' width='640' height='360'></iframe>",
-        "<iframe src='videos/meeting_social.mp4' width='640' height='360'></iframe>",
-        "<iframe src='videos/rounding_social.mp4' width='640' height='360'></iframe>",
-        "<iframe src='videos/searching_social.mp4' width='640' height='360'></iframe>",
+      // unshuffled list of social feedback video times
+      let unshuffled_social_feedback_videos = [
+        "<iframe src='videos/bouncing_social.mp4' width='600' height='360'></iframe>",
+        "<iframe src='videos/bumping_social.mp4' width='600' height='360'></iframe>",
+        "<iframe src='videos/ignoring_social.mp4' width='600' height='360'></iframe>",
+        "<iframe src='videos/meeting_social.mp4' width='600' height='360'></iframe>",
+        "<iframe src='videos/rounding_social.mp4' width='600' height='360'></iframe>",
+        "<iframe src='videos/searching_social.mp4' width='600' height='360'></iframe>"
       ];
 
-      var physical_feedback_videos = [
-        "<iframe src='videos/bouncing_physical.mp4' width='640' height='360'></iframe>",
-        "<iframe src='videos/bumping_physical.mp4' width='640' height='360'></iframe>",
-        "<iframe src='videos/ignoring_physical.mp4' width='640' height='360'></iframe>",
-        "<iframe src='videos/meeting_physical.mp4' width='640' height='360'></iframe>",
-        "<iframe src='videos/rounding_physical.mp4' width='640' height='360'></iframe>",
-        "<iframe src='videos/searching_physical.mp4' width='640' height='360'></iframe>",
+      // unshuffled list of pattern feedback video times
+      let unshuffled_pattern_feedback_videos = [
+        "<iframe src='videos/bouncing_pattern.mp4' width='600' height='360'></iframe>",
+        "<iframe src='videos/bumping_pattern.mp4' width='600' height='360'></iframe>",
+        "<iframe src='videos/ignoring_pattern.mp4' width='600' height='360'></iframe>",
+        "<iframe src='videos/meeting_pattern.mp4' width='600' height='360'></iframe>",
+        "<iframe src='videos/rounding_pattern.mp4' width='600' height='360'></iframe>",
+        "<iframe src='videos/searching_pattern.mp4' width='600' height='360'></iframe>"
       ];
 
-      var sf_time_list = [
-        4000,
+      // unshuffled list of social feedback video times
+      // 1000 added to video length to compensate for video loading speed
+      let unshuffled_sf_time_list = [
+        3500,
         3000,
         4000,
         3000,
@@ -114,81 +154,136 @@
         3000
       ];
 
-      var pf_time_list = [
+      // unshuffled list of pattern feedback video times
+      // 1000 added to video length to compensate for video loading speed
+      let unshuffled_pf_time_list = [
         6000,
         3000,
         2000,
         13000,
         10000,
-        16000
+        6000
       ];
 
+      // calls match_with_array function
+      // shuffles all of the test arrays according to the shuffled array of integers
+      // they can't each be shuffled differently because the videos still need to correspond to one another
+      let obs = match_with_array(shuffled_array, unshuffled_obs);
+      let obs_time_list = match_with_array(shuffled_array, unshuffled_obs_time_list);
+      let social_feedback_videos = match_with_array(shuffled_array, unshuffled_social_feedback_videos);
+      let pattern_feedback_videos = match_with_array(shuffled_array, unshuffled_pattern_feedback_videos);
+      let sf_time_list = match_with_array(shuffled_array, unshuffled_sf_time_list);
+      let pf_time_list = match_with_array(shuffled_array, unshuffled_pf_time_list);
 
-      // creates random number, either 0 or 1, used for practice
-      var randomization1 = Math.floor((Math.random() * 2));
+      // create random number, either 0 or 1, used for practice
+      let randomization1 = Math.floor((Math.random() * 2));
 
       // array of options/answers to multiple choice question
-      var question_options = ['up', 'down', 'left', 'right','other'];
+      let question_options = ['up', 'down', 'left', 'right','other'];
 
-      // creates multiple choice question
-      var question = {
+      // create object: multiple choice practice question
+      let practice_question = {
         type: "survey-multi-choice",
-        questions: [{prompt: "Make a prediction about where the green square will go next: ", options: question_options, required: true}],
+        questions: [{prompt: "Make a prediction about where the <font color='red'>RED</font> triangle will go next: ", options: question_options, required: true}],
+        data: {test_part: 'practice_question'}
+      }
+
+      // create object: multiple choice test question
+      let question = {
+        type: "survey-multi-choice",
+        questions: [{prompt: "Make a prediction about where the <font color='MediumSeaGreen'>GREEN</font> square will go next: ", options: question_options, required: true}],
         data: {test_part: 'question'}
       }
 
-      var practice_other = {
-        type: "survey-text",
-        questions: function() {
-          var multiple_choice_response = jsPsych.data.get().filter({test_part: 'question'}).select('responses').values[0];
+      // create object
+      // if other was picked, prompt user with type response
+      // if a direction was picked, show 1 millisecond blank screen
+      let practice_other = {
+
+        // function returns timeline object type
+        type: function practice_type() {
+
+          // get the user's response to the practice question under the key called "responses"
+          let multiple_choice_response = jsPsych.data.get().filter({test_part: 'practice_question'}).select('responses').values[0];
+
+          // return test type according to value of the key
+          if (multiple_choice_response == '{"Q0":"other"}') {
+            return 'survey-text';
+          }
+          return 'html-keyboard-response';
+        },
+
+        // since stimulus is required if the test type is "html-keyboard-response", it will be a blank space
+        // if the test type is "survey-test", this key will be IGNORED
+        stimulus: ' ',
+
+        // prompts user to provide written explanation if test type is "survey text"
+        // if the test type is "html-keyboard-response", this key will be IGNORED
+        questions: function practice_question() {
+
+          let multiple_choice_response = jsPsych.data.get().filter({test_part: 'practice_question'}).select('responses').values[0];
+
+          // same as above: user will be prompted ONLY if they clicked "other"
           if (multiple_choice_response == '{"Q0":"other"}') {
             return [{prompt: "Other:", rows:3}];
           }
-          return [{prompt: "Press 'continue' to see the actual result", rows:1, columns:1}];
         },
-        data: {test_part: 'practice_other'}
+        data: {test_part: 'practice_other'},
+
+        // makes the blank screen 1 millisecond long only if "html-keyboard-response"
+        trial_duration: 1
       }
 
-
-
-      // rate level of surprise
-      var slider = {
+      // rate level of surprise using a slider
+      let slider = {
         type: "html-slider-response",
-        stimulus: "How surprised were you?"
+        stimulus: "How surprised were you?",
+
+        // labels the slider
+        labels: ["not surprised", "very surprised"],
+        slider_width: 800,
+        data: {test_part: 'slider'}
       }
 
       // free response question to explain level of surprise
-      var explanation = {
+      let explanation = {
         type: "survey-text",
-        questions: [{prompt: "Explain your answer."}]
+        questions: [{prompt: "Explain your answer."}],
+        data: {test_part: 'explanation'}
       }
 
-      // creates video object for the practice round
-      var selected_video = {
+      // create video object for the practice round
+      let selected_video = {
         type: "html-keyboard-response",
+
+        // using the random number generated (0 or 1), select either the social or physical practice video
         stimulus: practice_videos[randomization1],
         choices: jsPsych.NO_KEYS,
+
+        // using random number generated, select the corresponding time
         trial_duration: practice_time_list[randomization1]
       }
 
-      // creates nested timeline for practice round
-      var practice_round = {
-        timeline: [practice_proceed, fixation, selected_video, question, practice_other]
+      // create nested timeline for practice round
+      let practice_round = {
+        timeline: [practice_proceed, fixation, selected_video, practice_question, practice_other]
       }
       timeline.push(practice_round);
 
       // screen right before test begins
-      var test_intro = {
+      let test_intro = {
         type: "html-keyboard-response",
         stimulus: "<p>The practice round has ended. The task will now begin.<p>"+
           "<p>Press any key to continue</p>"
       }
       timeline.push(test_intro);
 
-// condition ? return if true, return if false
-      var feedback_videos = randomization1 == 0 ? social_feedback_videos: physical_feedback_videos;
+      // condition ? return social_feedback_videos if true, return pattern_feedback_videos if false
+      // the result of this statement will become a param for create_trials()
+      let feedback_videos = randomization1 == 0 ? social_feedback_videos: pattern_feedback_videos;
 
-      var test_procedure = create_trials(
+      // call create_trials() function
+      let test_procedure = create_trials(
         obs,
         feedback_videos,
         randomization1,
@@ -201,27 +296,57 @@
         pf_time_list
       );
 
-      // puts nested timeline into big timeline
-      var test_trials = {
+      // put nested timeline into big timeline
+      let test_trials = {
         timeline: test_procedure
       }
       timeline.push(test_trials);
 
       // end screen
-      var task_finish = {
+      let task_finish = {
         type: "html-keyboard-response",
         stimulus: "<p>Press any key to continue</p>"
       }
       timeline.push(task_finish);
 
+      // initialize the big timeline
       jsPsych.init({
         timeline: timeline,
+
+        // when big timeline ends, perform these operations
         on_finish: function(data){
           jsPsych.data.displayData();
+          console.log("DATA FROM ALL TRIALS", experiment_data());
+
+          // get a json string of the participant ID in this format: "{"Q0":"123456"}"
+          let id_unparsed = jsPsych.data.get().filter({test_part: 'participant_id'}).select('responses').values[0];
+
+          // parse the ID (removes outer quotes)
+          let id_parsed = JSON.parse(id_unparsed);
+
+          // get the number as a string
+          let id = id_parsed["Q0"];
+          console.log("id", id)
+
+          // call function that sends data to S3 bucket
+          send_data(id);
         }
       });
+/*
+      // create 6 digit id that each participant is assigned to and is then required to enter upon finishing the study
+      function id() {
+        let id = 0;
 
-      // method creates nested timeline for the test part
+        // loop removes any "6 digit" numbers under 100,000
+        while (id < 100000) {
+
+          // generates random number between 0 and 999,999
+          id = Math.floor((Math.random() * 1000000))
+        }
+        return id;
+      }
+*/
+      // method create nested timeline for the test part
       function create_trials(
         obs,
         feedback_videos,
@@ -235,15 +360,23 @@
         pf_time_list) {
 
         // define nested timeline
-        var logistics_timeline = [];
-        var i = 0;
+        let logistics_timeline = [];
+        let i = 0;
+
+        // for each obs video, append objects created at the top, in order
         for (i = 0; i < obs.length; i++) {
-          // put observed video in timeline
-          var video_object = {
+
+          // put observed video in timeline as a JSON object
+          let video_object = {
             type: "html-keyboard-response",
+
+            // take link with index "i" from the list of shuffled obs links
             stimulus: obs[i],
             choices: jsPsych.NO_KEYS,
-            trial_duration: obs_time_list[i]
+
+            // take timestamp with index "i" from the obs_time_list
+            trial_duration: obs_time_list[i],
+            data: {test_part: 'video_url'}
           }
 
           // put fixation, social video, and multiple choice question in timeline
@@ -253,17 +386,48 @@
 
           logistics_timeline.push(question);
 
-          var other = {
-            type: "survey-text",
-            questions: function() {
-              var length = jsPsych.data.get().filter({test_part: 'question'}).select('responses').values.length;
-              var multiple_choice_response = jsPsych.data.get().filter({test_part: 'question'}).select('responses').values[length-1];
+          // same as practice_other, save for a few things
+          let other = {
+            type: function type() {
+
+              // unlike practice_other, we need to get the value of the most recent response
+              // in order to do this we find the length and use that as the index for the array of responses
+              let length = jsPsych.data.get().filter({test_part: 'question'}).select('responses').values.length;
+              let multiple_choice_response = jsPsych.data.get().filter({test_part: 'question'}).select('responses').values[length-1];
+              if (multiple_choice_response == '{"Q0":"other"}') {
+                return 'survey-text';
+              }
+              return 'html-keyboard-response';
+            },
+            stimulus: ' ',
+            questions: function question() {
+              let length = jsPsych.data.get().filter({test_part: 'question'}).select('responses').values.length;
+              let multiple_choice_response = jsPsych.data.get().filter({test_part: 'question'}).select('responses').values[length-1];
               if (multiple_choice_response == '{"Q0":"other"}') {
                 return [{prompt: "Other:", rows:3}];
               }
-              return [{prompt: "Press 'continue' to see the actual result", rows:1, columns:1}];
             },
-            data: {test_part: 'other'}
+            data: function testpart() {
+              let length = jsPsych.data.get().filter({test_part: 'question'}).select('responses').values.length;
+              let multiple_choice_response = jsPsych.data.get().filter({test_part: 'question'}).select('responses').values[length-1];
+
+              // if the type of test is a survey-text ("other" was picked the question prior)
+              // create a key for the trial called test_part
+              // since the user's response to the survey_text will automatically be logged in "responses", we don't worry about making a responses: key
+              if (multiple_choice_response == '{"Q0":"other"}') {
+                return {test_part: 'other'};
+              }
+
+              // if the type of test is an html-keyboard-response ("other" was NOT picked the question prior)
+              // create two keys, since the "responses" key is not a given key in html-keyboard-response trials
+              // therefore we have to make it ourself
+              // this is important because later we will be looking for the value "responses" key when gathering data
+              return {test_part: 'other', responses: 'not an "other"'};
+            },
+
+            // if html-keyboard-response, the blank screen will last for 1 millisecond
+            // if survey-text, this key will be ignored
+            trial_duration: 1
           }
           logistics_timeline.push(other);
 
@@ -271,23 +435,33 @@
           if (randomization1 == 0) {
 
             // put feedback video in timeline
-            var feedback_object = {
+            let feedback_object = {
               type: "html-keyboard-response",
+
+              // take social feedback video with index "i" from social_feedback_videos list
               stimulus: social_feedback_videos[i],
               choices: jsPsych.NO_KEYS,
-              trial_duration: sf_time_list[i]
+
+              // take social feedback video timestamps with index "i" from sf_time_list
+              trial_duration: sf_time_list[i],
+              data: {test_part:'feedback_url'}
             }
             logistics_timeline.push(feedback_object);
           }
 
-          // same thing except this time the random number is 1 and the videos are all physical
+          // same thing except this time the random number is 1 and the videos are all pattern
           else {
 
-            var feedback_object = {
+            let feedback_object = {
               type: "html-keyboard-response",
-              stimulus: physical_feedback_videos[i],
+
+              // take pattern feedback video with index "i" from pattern_feedback_videos list
+              stimulus: pattern_feedback_videos[i],
               choices: jsPsych.NO_KEYS,
-              trial_duration: pf_time_list[i]
+
+              // take physical feedback video timestamps with index "i" from sf_time_list
+              trial_duration: pf_time_list[i],
+              data: {test_part:'feedback_url'}
             }
             logistics_timeline.push(feedback_object);
           }
@@ -300,6 +474,88 @@
         }
         return logistics_timeline;
       }
+
+      // function that makes and combines numerous JSON objects into a list containing 6 keys each (using data)
+      function experiment_data() {
+
+        // define timeline of JSON objects
+        let trial_timeline = [];
+        for (let i = 0; i < obs.length; i++) {
+          let json = {
+
+            // for each of these keys we are selecting all of the data for that particular obs video
+            // jsPsych.data.get() gets all of the data from the experiment
+            // .filter() filters the data so that it will only return trials that are part of the certain "test_part", returning an array of JSON obj
+            // .select() selects the particular key within the trials
+            // .values gets the value of the corresponding key in an array, so the [i] is needed
+            "video_url":jsPsych.data.get().filter({test_part: 'video_url'}).select('stimulus').values[i],
+            "answer_to_question":jsPsych.data.get().filter({test_part: 'question'}).select('responses').values[i],
+            "other_explanation": jsPsych.data.get().filter({test_part: 'other'}).select('responses').values[i],
+            "feedback_url":jsPsych.data.get().filter({test_part: 'feedback_url'}).select('stimulus').values[i],
+            "slider_value":jsPsych.data.get().filter({test_part: 'slider'}).select('response').values[i],
+            "slider_explanation":jsPsych.data.get().filter({test_part: 'explanation'}).select('responses').values[i]
+          }
+          trial_timeline.push(json);
+        }
+        return trial_timeline;
+      }
+
+      // this method takes an array and shuffles it randomly
+      // link to original post: https://github.com/Daplie/knuth-shuffle/blob/master/index.js
+      function shuffle(array) {
+        let currentIndex = array.length, temporaryValue, randomIndex;
+
+        // While there remain elements to shuffle...
+        while (0 !== currentIndex) {
+
+          // Pick a remaining element...
+          randomIndex = Math.floor(Math.random() * currentIndex);
+          currentIndex -= 1;
+
+          // And swap it with the current element.
+          temporaryValue = array[currentIndex];
+          array[currentIndex] = array[randomIndex];
+          array[randomIndex] = temporaryValue;
+        }
+        return array;
+      }
+
+      // take in the shuffled array of integers and second array of the same length
+      // shuffle the second array based on the order of that shuffled array of integers
+      function match_with_array (shuffled_array, substance_array) {
+        let new_array = [];
+
+        for (let i = 0; i < shuffled_array.length; i++) {
+
+          // for each index in the shuffled array of integers, set its corresponding integral value to shuffled_value
+          let shuffled_value = shuffled_array[i];
+
+          // that integer will become the index for the value we will append to the new array
+          new_array.push(substance_array[shuffled_value]);
+        }
+        return new_array;
+      }
+
+      // sends the user's data to the S3 bucket
+      function send_data(id) {
+
+        // define new XML Http request
+        let xhr = new XMLHttpRequest();
+
+        // (method, url, asynchronous(y/n))
+        xhr.open("POST", "https://7k5k1tu2bl.execute-api.us-east-1.amazonaws.com/Production/SaveData", true);
+        xhr.setRequestHeader('Content-Type', "application/x-www-form-urlencoded; charset=UTF-8");
+
+        // JSON.stringify turns a non-string into a string so that it can be sent to the bucket
+        xhr.send(JSON.stringify({
+          "data":JSON.stringify(experiment_data()),
+          
+          // id is already a string so it does not need JSON.stringify
+          "participant_id":id
+        }));
+      }
+
+
 
     </script>
 </html>

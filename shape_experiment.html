@@ -18,17 +18,17 @@
       var timeline = [];
 
       // assign a unique number to the participant
-      var enter_experiment_number = {
+      var enter_participant_number = {
         type: "survey-text",
         questions: [{prompt: "Enter participant number:"}],
-        data: {test_part: 'experiment_number'}
+        data: {test_part: 'participant_number'}
       }
-      timeline.push(enter_experiment_number);
+      timeline.push(enter_participant_number);
 
       // project title
       var welcome = {
         type: "html-keyboard-response",
-        stimulus: "<p>Project title: <p>" +
+        stimulus: "<p>Project title: (social prediction) <p>" +
           "<p>Welcome to the experiment. Press any key to begin.<p>"
       };
       timeline.push(welcome);
@@ -37,14 +37,14 @@
       var instructions = {
         type: "html-keyboard-response",
         stimulus: "<p>In this experiment... (to be finished).</p>"+
-          "<p>Press any key to begin.</p>",
+          "<p>Press any key to continue.</p>",
       };
       timeline.push(instructions);
 
       // creates fixation plus sign
       var fixation = {
         type: 'html-keyboard-response',
-        stimulus: '<p>+</p>',
+        stimulus: '<b>+</b>',
         choices: jsPsych.NO_KEYS,
         trial_duration: 2000,
         data: {test_part: 'fixation'}
@@ -58,8 +58,8 @@
       }
 
       var practice_videos = [
-        "<iframe src='videos/bouncing_obs.mp4' width='640' height='360'></iframe>",
-        "<iframe src='videos/searching_obs.mp4' width='640' height='360'></iframe>"
+        "<video src='videos/bouncing_obs.mp4' width='1720' height='560' autoplay='1'></video>",
+        "<video src='videos/searching_obs.mp4' width='1720' height='560' autoplay='1'></video>"
       ];
 
       var practice_time_list = [
@@ -68,12 +68,12 @@
       ];
 
       var obs = [
-        "<iframe src='videos/bouncing_obs.mp4' width='640' height='360'></iframe>",
-        "<iframe src='videos/bumping_obs.mp4' width='640' height='360'></iframe>",
-        "<iframe src='videos/ignoring_obs.mp4' width='640' height='360'></iframe>",
-        "<iframe src='videos/meeting_obs.mp4' width='640' height='360'></iframe>",
-        "<iframe src='videos/rounding_obs.mp4' width='640' height='360'></iframe>",
-        "<iframe src='videos/searching_obs.mp4' width='640' height='360'></iframe>"
+        "<video src='videos/bouncing_obs.mp4' width='1720' height='560' autoplay='1'></video>",
+        "<video src='videos/bumping_obs.mp4' width='1720' height='560' autoplay='1'></video>",
+        "<video src='videos/ignoring_obs.mp4' width='1720' height='560' autoplay='1'></video>",
+        "<video src='videos/meeting_obs.mp4' width='1720' height='560' autoplay='1'></video>",
+        "<video src='videos/rounding_obs.mp4' width='1720' height='560' autoplay='1'></video>",
+        "<video src='videos/searching_obs.mp4' width='1720' height='560' autoplay='1'></video>"
       ];
 
       // 1000 added to video length
@@ -88,25 +88,25 @@
 
 
       var social_feedback_videos = [
-        "<iframe src='videos/bouncing_social.mp4' width='640' height='360'></iframe>",
-        "<iframe src='videos/bumping_social.mp4' width='640' height='360'></iframe>",
-        "<iframe src='videos/ignoring_social.mp4' width='640' height='360'></iframe>",
-        "<iframe src='videos/meeting_social.mp4' width='640' height='360'></iframe>",
-        "<iframe src='videos/rounding_social.mp4' width='640' height='360'></iframe>",
-        "<iframe src='videos/searching_social.mp4' width='640' height='360'></iframe>",
+        "<video src='videos/bouncing_social.mp4' width='1720' height='560' autoplay='1'></video>",
+        "<video src='videos/bumping_social.mp4' width='1720' height='560' autoplay='1'></video>",
+        "<video src='videos/ignoring_social.mp4' width='1720' height='560' autoplay='1'></video>",
+        "<video src='videos/meeting_social.mp4' width='1720' height='560' autoplay='1'></video>",
+        "<video src='videos/rounding_social.mp4' width='1720' height='560' autoplay='1'></video>",
+        "<video src='videos/searching_social.mp4' width='1720' height='560' autoplay='1'></video>"
       ];
 
-      var physical_feedback_videos = [
-        "<iframe src='videos/bouncing_physical.mp4' width='640' height='360'></iframe>",
-        "<iframe src='videos/bumping_physical.mp4' width='640' height='360'></iframe>",
-        "<iframe src='videos/ignoring_physical.mp4' width='640' height='360'></iframe>",
-        "<iframe src='videos/meeting_physical.mp4' width='640' height='360'></iframe>",
-        "<iframe src='videos/rounding_physical.mp4' width='640' height='360'></iframe>",
-        "<iframe src='videos/searching_physical.mp4' width='640' height='360'></iframe>",
+      var pattern_feedback_videos = [
+        "<video src='videos/bouncing_pattern.mp4' width='1720' height='560' autoplay='1'></video>",
+        "<video src='videos/bumping_pattern.mp4' width='1720' height='560' autoplay='1'></video>",
+        "<video src='videos/ignoring_pattern.mp4' width='1720' height='560' autoplay='1'></video>",
+        "<video src='videos/meeting_pattern.mp4' width='1720' height='560' autoplay='1'></video>",
+        "<video src='videos/rounding_pattern.mp4' width='1720' height='560' autoplay='1'></video>",
+        "<video src='videos/searching_pattern.mp4' width='1720' height='560' autoplay='1'></video>"
       ];
 
       var sf_time_list = [
-        4000,
+        3500,
         3000,
         4000,
         3000,
@@ -120,7 +120,7 @@
         2000,
         13000,
         10000,
-        16000
+        6000
       ];
 
 
@@ -131,6 +131,12 @@
       var question_options = ['up', 'down', 'left', 'right','other'];
 
       // creates multiple choice question
+      var practice_question = {
+        type: "survey-multi-choice",
+        questions: [{prompt: "Make a prediction about where the green square will go next: ", options: question_options, required: true}],
+        data: {test_part: 'practice_question'}
+      }
+
       var question = {
         type: "survey-multi-choice",
         questions: [{prompt: "Make a prediction about where the green square will go next: ", options: question_options, required: true}],
@@ -138,31 +144,47 @@
       }
 
       var practice_other = {
-        type: "survey-text",
-        questions: function() {
-          var multiple_choice_response = jsPsych.data.get().filter({test_part: 'question'}).select('responses').values[0];
+        type: function() {
+          var multiple_choice_response = jsPsych.data.get().filter({test_part: 'practice_question'}).select('responses').values[0];
           if (multiple_choice_response == '{"Q0":"other"}') {
+            console.log("this is survey text")
+            return 'survey-text'
+          }
+          console.log("it's an html-keyboard-response trial")
+          return 'html-keyboard-response'
+        },
+        stimulus: function hello() {
+          var multiple_choice_response = jsPsych.data.get().filter({test_part: 'practice_question'}).select('responses').values[0];
+          if (multiple_choice_response == '{"Q0":"other"}') {
+            console.log("stimulus 0")
+            return ' '
+          }
+          console.log("stimulus 1")
+          return ' '
+        },
+        questions: function hello1() {
+          var multiple_choice_response = jsPsych.data.get().filter({test_part: 'practice_question'}).select('responses').values[0];
+          if (multiple_choice_response == '{"Q0":"other"}') {
+            console.log("questions 0")
             return [{prompt: "Other:", rows:3}];
           }
-          else if (multiple_choice_response == '{"Q0":"up"}' || multiple_choice_response == '{"Q0":"down"}' || multiple_choice_response == '{"Q0":"left"}' || multiple_choice_response == '{"Q0":"right"}'){
-            return [{prompt: "Press 'continue' to see the actual result", rows:1, columns:1}];
-          }
         },
-        data: {test_part: 'practice_other'}
+        data: {test_part: 'practice_other'},
+        trial_duration: 1
       }
-
-
 
       // rate level of surprise
       var slider = {
         type: "html-slider-response",
-        stimulus: "How surprised were you?"
+        stimulus: "How surprised were you?",
+        data: {test_part:'slider'}
       }
 
       // free response question to explain level of surprise
       var explanation = {
         type: "survey-text",
-        questions: [{prompt: "Explain your answer."}]
+        questions: [{prompt: "Explain your answer."}],
+        data: {test_part:'explanation'}
       }
 
       // creates video object for the practice round
@@ -175,7 +197,7 @@
 
       // creates nested timeline for practice round
       var practice_round = {
-        timeline: [practice_proceed, fixation, selected_video, question, practice_other]
+        timeline: [practice_proceed, fixation, selected_video, practice_question, practice_other]
       }
       timeline.push(practice_round);
 
@@ -188,7 +210,7 @@
       timeline.push(test_intro);
 
 // condition ? return if true, return if false
-      var feedback_videos = randomization1 == 0 ? social_feedback_videos: physical_feedback_videos;
+      var feedback_videos = randomization1 == 0 ? social_feedback_videos: pattern_feedback_videos;
 
       var test_procedure = create_trials(
         obs,
@@ -216,10 +238,12 @@
       }
       timeline.push(task_finish);
 
+
       jsPsych.init({
         timeline: timeline,
         on_finish: function(data){
           jsPsych.data.displayData();
+          console.log("DATA FROM ALL TRIALS", experiment_data())
         }
       });
 
@@ -245,7 +269,8 @@
             type: "html-keyboard-response",
             stimulus: obs[i],
             choices: jsPsych.NO_KEYS,
-            trial_duration: obs_time_list[i]
+            trial_duration: obs_time_list[i],
+            data: {test_part: 'video_url'}
           }
 
           // put fixation, social video, and multiple choice question in timeline
@@ -256,18 +281,28 @@
           logistics_timeline.push(question);
 
           var other = {
-            type: "survey-text",
-            questions: function() {
+            type: function() {
               var length = jsPsych.data.get().filter({test_part: 'question'}).select('responses').values.length;
               var multiple_choice_response = jsPsych.data.get().filter({test_part: 'question'}).select('responses').values[length-1];
               if (multiple_choice_response == '{"Q0":"other"}') {
+                console.log("this is survey text")
+                return 'survey-text'
+              }
+              console.log("it's an html-keyboard-response trial")
+              return 'html-keyboard-response'
+            },
+            stimulus: ' ',
+            questions: function hello1() {
+              console.log("VALUES", jsPsych.data.get().filter({test_part: 'question'}).select('responses').values)
+              var length = jsPsych.data.get().filter({test_part: 'question'}).select('responses').values.length;
+              var multiple_choice_response = jsPsych.data.get().filter({test_part: 'question'}).select('responses').values[length-1];
+              if (multiple_choice_response == '{"Q0":"other"}') {
+                console.log("questions 0")
                 return [{prompt: "Other:", rows:3}];
               }
-              else if (multiple_choice_response == '{"Q0":"up"}' || multiple_choice_response == '{"Q0":"down"}' || multiple_choice_response == '{"Q0":"left"}' || multiple_choice_response == '{"Q0":"right"}'){
-                return [{prompt: "Press 'continue' to see the actual result", rows:1, columns:1}];
-              }
             },
-            data: {test_part: 'other'}
+            data: {test_part: 'other'},
+            trial_duration: 1
           }
           logistics_timeline.push(other);
 
@@ -279,19 +314,21 @@
               type: "html-keyboard-response",
               stimulus: social_feedback_videos[i],
               choices: jsPsych.NO_KEYS,
-              trial_duration: sf_time_list[i]
+              trial_duration: sf_time_list[i],
+              data: {test_part:'feedback_url'}
             }
             logistics_timeline.push(feedback_object);
           }
 
-          // same thing except this time the random number is 1 and the videos are all physical
+          // same thing except this time the random number is 1 and the videos are all pattern
           else {
 
             var feedback_object = {
               type: "html-keyboard-response",
-              stimulus: physical_feedback_videos[i],
+              stimulus: pattern_feedback_videos[i],
               choices: jsPsych.NO_KEYS,
-              trial_duration: pf_time_list[i]
+              trial_duration: pf_time_list[i],
+              data: {test_part:'feedback_url'}
             }
             logistics_timeline.push(feedback_object);
           }
@@ -303,6 +340,27 @@
           logistics_timeline.push(explanation);
         }
         return logistics_timeline;
+      }
+
+      // function that uses the data and makes a JSON object of a trial
+      function experiment_data() {
+        //things to get: {video url: , answer to question: , feedback video url: ,  slider value: , explanation: , }
+        var trial_timeline = [];
+        for (var i = 0; i < (obs.length); i++) {
+          var json = {
+            "video_url":jsPsych.data.get().filter({test_part: 'video_url'}).select('stimulus').values[i],
+            "answer_to_question":jsPsych.data.get().filter({test_part: 'question'}).select('responses').values[i],
+            "feedback_url":jsPsych.data.get().filter({test_part: 'feedback_url'}).select('stimulus').values[i],
+            "slider_value":jsPsych.data.get().filter({test_part: 'slider'}).select('response').values[i],
+            "slider_explanation":jsPsych.data.get().filter({test_part: 'explanation'}).select('responses').values[i]
+          }
+          trial_timeline.push(json);
+        }
+        var json_finalround = {
+          "responses_to_'OTHER'": jsPsych.data.get().filter({test_part: 'other'}).select('responses').values
+        }
+        trial_timeline.push(json_finalround);
+        return trial_timeline;
       }
 
     </script>
