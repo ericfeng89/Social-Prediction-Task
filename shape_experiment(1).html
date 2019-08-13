@@ -333,7 +333,7 @@
       // free response question to explain level of surprise
       let explanation = {
         type: "survey-text",
-        questions: [{prompt: "Explain your answer.", rows:3}],
+        questions: [{prompt: "Please explain your answer.", rows:3}],
         data: {test_part: 'explanation'}
       }
 
@@ -358,7 +358,7 @@
       // screen right before test begins
       let test_intro = {
         type: "html-keyboard-response",
-        stimulus: "<p>The practice round has ended. The task will now begin.</p>"+
+        stimulus: "<p><b>The practice round has ended. The task will now begin.</b></p>"+
           "<p>Press any key to continue</p>"
       }
       timeline.push(test_intro);
@@ -403,7 +403,7 @@
 
           send_data(id);
           console.log(experiment_data());
-          return "<p>You have finished. Click the link below.</p>"+"<a href='https://neu.co1.qualtrics.com/jfe/form/SV_80J3UhoUJ013LbT'>https://neu.co1.qualtrics.com/jfe/form/SV_80J3UhoUJ013LbT</a>";
+          return "<p>Congratulations, you have finished part 1 of the experiment. Click the link below for part 2.</p>"+"<a href='https://neu.co1.qualtrics.com/jfe/form/SV_80J3UhoUJ013LbT'>https://neu.co1.qualtrics.com/jfe/form/SV_80J3UhoUJ013LbT</a>";
         },
         choices: jsPsych.NO_KEYS
       }
