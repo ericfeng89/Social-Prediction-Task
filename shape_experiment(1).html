@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Shape experiment</title>
+        <title>Action Perception Task</title>
         <script src="jspsych-6.0.5/jspsych.js"></script>
         <script src="jspsych-6.0.5/plugins/jspsych-html-keyboard-response.js"></script>
         <script src="jspsych-6.0.5/plugins/jspsych-image-keyboard-response.js"></script>
@@ -99,7 +99,7 @@
         type: "html-keyboard-response",
 
         // stimulus is the text displayed on the screen, prompts user
-        stimulus: "<p>Project title: (social prediction) </p>" +
+        stimulus: "<p><b>Action Perception Task</b></p>" +
           "<p>Welcome to the experiment. Press any key to begin.</p>"
       };
       timeline.push(welcome);
@@ -107,7 +107,8 @@
       // give instructions to the experiment
       let instructions = {
         type: "html-keyboard-response",
-        stimulus: "<p>In this experiment... (to be finished).</p>"+
+        stimulus: "<p>In this experiment, you will be shown a video consisting of moving shapes. Once the clip ends, you will be asked to predict the next movement of one of the shapes. Once you have made a prediction, the true outcome will be displayed on screen. You will then be asked to rate how much you expected the outcome. Finally, you will be asked to explain your answer to the previous question. This process will repeat 6 times.</p>"+
+          "<p>This task should take no longer than one hour to finish. However, you may take as much as you need.<p>"+
           "<p>Press any key to continue.</p>",
       };
       timeline.push(instructions);
@@ -128,7 +129,7 @@
       // create screen right before beginning practice
       let practice_proceed = {
         type: "html-keyboard-response",
-        stimulus: "<p>This will be a practice round.</p>"+
+        stimulus: "<p><b>This will be a practice round.</b></p>"+
           "<p>Press any key to continue.</p>"
       }
 
@@ -332,7 +333,7 @@
       // free response question to explain level of surprise
       let explanation = {
         type: "survey-text",
-        questions: [{prompt: "Explain your answer."}],
+        questions: [{prompt: "Explain your answer.", rows:3}],
         data: {test_part: 'explanation'}
       }
 
