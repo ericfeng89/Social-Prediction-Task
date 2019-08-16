@@ -17,15 +17,18 @@
       // create timeline
       let timeline = [];
 
+      var six_digit_random = six_digit_random();
+
       // assign a unique number to the participant
       let enter_participant_id = {
 
         // jsPsych specific: must enter the type of object
-        type: "survey-text",
+        type: "html-keyboard-response",
 
         // for "survey-text", there must be an array of questions in this format
-        questions: [{prompt: "Enter participant ID number (6 digits):"}],
+        stimulus: "Participant ID (please copy and paste to MTurk page, then press 'p' to continue): <br><br>"+ six_digit_random,
 
+        choices: ['p'],
         // create an additional property with key "test_part" for easy access later
         data: {test_part: 'participant_id'}
       }
@@ -50,7 +53,7 @@
         +
         "<p>The possible risks or discomforts of the study are minimal. You will be viewing images of shapes moving together. If you feel uncomfortable you may stop the task at any time.</p>"
         +
-        "<p>You will receive $8 for completing this study.  You must complete 100% of the responses in order to receive payment.</p>"
+        "<p>You will receive $6 for completing this study.  You must complete 100% of the responses in order to receive payment.</p>"
         +
         "<p>Your part in this study is anonymous to the researcher(s). However, because of the nature of web-based surveys, it is possible that respondents could be identified by the IP address or other electronic record associated with the response. Neither the researcher nor anyone involved with this survey will be capturing those data. Any reports or publications based on this research will use only group data and will not identify you or any individual as being affiliated with this project. The only individually-identifying data we receive from Mechanical Turk are your unique identifier and your country. Your data are also stored on Mechanical Turk's servers, and the data there are subject to the Amazon Mechanical Turk Privacy Notice and Participation Agreement.</p>"
         +
@@ -63,7 +66,7 @@
         "<p>Your participation is completely voluntary, and you may choose to discontinue at any time without penalty. If you prefer not to participate or to discontinue participation, simply closer the browser at any time.</p>"
         +
         "<p>By clicking 'Yes, I provide consent to participate in this study' and pressing the 'OK' button, you assert that you understand the statement given above and consent to participate in the study. Please print out a copy of this consent form for your records or contact us if you would prefer an electronic copy of the consent.</p>"
-        +"<a href='https://www.dropbox.com/s/adggrgaa562ymn4/ConsentForm.pdf?dl=0'>Consent Form .pdf</a>",
+        +"<a href='https://www.dropbox.com/s/06npfczzlc1b4mg/ConsentForm.pdf?dl=0'>Consent Form .pdf</a>",
         options: ['Yes, I provide consent to participate in the study']}],
         button_label: 'OK',
         data: {test_part: 'consent_form'}
@@ -108,7 +111,7 @@
       let instructions = {
         type: "html-keyboard-response",
         stimulus: "<p>In this experiment, you will be shown a video consisting of moving shapes. Once the clip ends, you will be asked to predict the next movement of one of the shapes. Once you have made a prediction, the true outcome will be displayed on screen. You will then be asked to rate how much you expected the outcome. Finally, you will be asked to explain your answer to the previous question. This process will repeat 6 times.</p>"+
-          "<p>This task should take no longer than one hour to finish. However, you may take as much as you need.<p>"+
+          "<p>This task should take no longer than one hour to finish. However, you may take as much as you need.<p>"+"<br>"+
           "<p>Press any key to continue.</p>",
       };
       timeline.push(instructions);
@@ -135,20 +138,20 @@
 
       // list of practice video links
       let practice_videos = [
-        "<video src='videos/practice_social.mp4' width='400' height='300' autoplay='1'></video>"+"<br><br><br><br><br><br><br><br>",
-        "<video src='videos/practice_pattern.mp4' width='400' height='300' autoplay='1'></video>"+"<br><br><br><br><br><br><br><br>"
+        "<div style='border:1px solid black;'><video src='videos/square_obs.mp4' width='600' height='300' autoplay='1'></video></div>"+"<br><br><br><br><br><br><br>",
+        "<div style='border:1px solid black;'><video src='videos/maze_obs.mp4' width='600' height='300' autoplay='1'></video></div>"+"<br><br><br><br><br><br><br>"
       ];
 
       // list of practice video times (in milliseconds)
       // 1000 added to video length to compensate for video loading speed
       let practice_time_list = [
-        7000,
-        7200
+        10500,
+        6700
       ];
 
       let practice_screenshot_list = [
-        "<img src='screenshots/practicesocial.PNG' width='390' height='290'></img>",
-        "<img src='screenshots/practicepattern.PNG' width='390' height='290'></img>"
+        "<img src='screenshots/square_obs_sc.PNG' width='600' height='300'></img>",
+        "<img src='screenshots/maze_obs_sc.PNG' width='600' height='300'></img>"
       ]
 
       // create list of numbers 0 to n
@@ -181,22 +184,22 @@
 
       // list of screenshots (last frame of the video)
       let unshuffled_screenshot_list = [
-        "<img src='screenshots/bouncingobs.PNG' width='400' height='300'></img>",
-        "<img src='screenshots/bumpingobs.PNG' width='400' height='300'></img>",
-        "<img src='screenshots/ignoringobs.PNG' width='400' height='300'></img>",
-        "<img src='screenshots/meetingobs.PNG' width='400' height='300'></img>",
-        "<img src='screenshots/roundingobs.PNG' width='400' height='300'></img>",
-        "<img src='screenshots/searchingobs.PNG' width='400' height='300'></img>"
+        "<img src='screenshots/bouncing_obs_sc.PNG' width='400' height='300'></img>",
+        "<img src='screenshots/bumping_obs_sc.PNG' width='400' height='300'></img>",
+        "<img src='screenshots/ignoring_obs_sc.PNG' width='400' height='300'></img>",
+        "<img src='screenshots/meeting_obs_sc.PNG' width='400' height='300'></img>",
+        "<img src='screenshots/rounding_obs_sc.PNG' width='400' height='300'></img>",
+        "<img src='screenshots/searching_obs_sc.PNG' width='400' height='300'></img>"
       ]
 
       // unshuffled list of test video times
-      // 1000 added to video length to compensate for video loading speed
+      // time added to video length to compensate for video loading speed
       let unshuffled_obs_time_list = [
         13000,
-        3200,
+        3400,
         6200,
         9000,
-        13000,
+        13200,
         10000
       ];
 
@@ -229,25 +232,25 @@
       let unshuffled_pattern_feedback_videos = make_link(unshuffled_pattern_short_videos)
 
       // unshuffled list of social feedback video times
-      // 1000 added to video length to compensate for video loading speed
+      // time added to video length to compensate for video loading speed
       let unshuffled_sf_time_list = [
         3500,
-        3000,
+        2700,
         4000,
         3000,
-        6000,
+        4000,
         3000
       ];
 
       // unshuffled list of pattern feedback video times
-      // 1000 added to video length to compensate for video loading speed
+      // time added to video length to compensate for video loading speed
       let unshuffled_pf_time_list = [
         5000,
         3000,
         2000,
         3000,
-        10000,
-        6000
+        9000,
+        4500
       ];
 
       // calls match_with_array function
@@ -275,7 +278,7 @@
       // create object: multiple choice practice question
       let practice_question = {
         type: "survey-multi-choice",
-        questions: [{prompt: practice_screenshot_list[randomization1]+"<p>Where will the <font color='red'>RED</font> triangle will go next?</p>", options: question_options, required: true}],
+        questions: [{prompt: practice_screenshot_list[randomization1]+"<p>Where will the <font color='MediumSeaGreen'>GREEN</font> square go next?</p>", options: question_options, required: true}],
         data: {test_part: 'practice_question'}
       }
 
@@ -343,7 +346,7 @@
 
         // using the random number generated (0 or 1), select either the social or physical practice video
         stimulus: practice_videos[randomization1],
-        choices: jsPsych.NO_KEYS,
+    //    choices: jsPsych.NO_KEYS,
 
         // using random number generated, select the corresponding time
         trial_duration: practice_time_list[randomization1]
@@ -393,13 +396,15 @@
         stimulus: function finish_task() {
 
           // get a json string of the participant ID in this format: "{"Q0":"123456"}"
-          let id_unparsed = jsPsych.data.get().filter({test_part: 'participant_id'}).select('responses').values[0];
+      //    let id_unparsed = jsPsych.data.get().filter({test_part: 'participant_id'}).select('.values[0;
 
           // parse the ID (removes outer quotes)
-          let id_parsed = JSON.parse(id_unparsed);
+  //        let id_parsed = JSON.parse(id_unparsed);
 
           // get the number as a string
-          let id = id_parsed["Q0"];
+  //        let id = id_parsed["Q0"];
+
+          let id = JSON.stringify(six_digit_random);
 
           send_data(id);
           console.log(experiment_data());
@@ -460,7 +465,7 @@
           // create object: multiple choice test question
           let question = {
             type: "survey-multi-choice",
-            questions: [{prompt: screenshot_list[i]+"<p>Where will the <font color='MediumSeaGreen'>GREEN</font> square will go next?</p>", options: question_options, required: true}],
+            questions: [{prompt: screenshot_list[i]+"<p>Where will the <font color='MediumSeaGreen'>GREEN</font> square go next?</p>", options: question_options, required: true}],
             data: {test_part: 'question'}
           }
 
@@ -611,13 +616,12 @@
 
       function make_link(array) {
         let new_array = [];
-        let part_1 = "<iframe src="
-        let part_2 = " width='400' height='300'></iframe>"+"<br><br><br><br><br><br><br><br>"
+        let part_1 = "<div style='border:1px solid black;'><video src="
+        let part_2 = " width='400' height='300' autoplay='1'>Error: your browser does not support this!</video></div>"+"<br><br><br><br><br><br><br><br>"
 
         for (let i = 0; i < array.length; i++) {
 
           let combined = part_1 + array[i] + part_2;
-          console.log(i, combined);
           new_array.push(combined);
         }
         return new_array;
@@ -656,6 +660,14 @@
           // id is already a string so it does not need JSON.stringify
           "participant_id":id
         }));
+      }
+
+      function six_digit_random() {
+        let number = 0;
+        while (number < 100000) {
+          number = Math.floor((Math.random() * 999999));
+        }
+        return JSON.stringify(number);
       }
 
     </script>
