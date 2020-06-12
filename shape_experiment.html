@@ -106,7 +106,7 @@
         // stimulus is the text displayed on the screen, prompts user
         stimulus: "<p><b>Action Perception Task</b></p>" +
           "<p>Welcome to the experiment. Press any key to begin.</p>"
-      };
+      }
       timeline.push(welcome);
 
       // give instructions to the experiment
@@ -115,7 +115,7 @@
         stimulus: "<p>In this experiment, you will be shown a video consisting of moving shapes. Once the clip ends, you will be asked to predict the next movement of one of the shapes. Once you have made a prediction, the true outcome will be displayed on screen. You will then be asked to rate how much you expected the outcome. Finally, you will be asked to explain your answer to the previous question. This process will repeat 6 times.</p>"+
           "<p>This task should take no longer than one hour to finish. However, you may take as much as you need.<p>"+"<br>"+
           "<p>Press any key to continue.</p>",
-      };
+      }
       timeline.push(instructions);
 
       // create fixation plus sign
@@ -155,22 +155,7 @@
       let practice_screenshot_list = [
         "<img src='screenshots/square_obs_sc.PNG' width='600' height='300'></img>",
         "<img src='screenshots/maze_obs_sc.PNG' width='600' height='300'></img>"
-      ]
-
-      // create list of numbers 0 to n
-      // this list will be randomized later
-      // randomized array to be used for shuffling video order
-      let unshuffled_array = [
-        0,
-        1,
-        2,
-        3,
-        4,
-        5
       ];
-
-      // call shuffle() function, value assigned to shuffled_array
-      let shuffled_array = shuffle(unshuffled_array);
 
       // unshuffled list of shortened test video links
       // to be converted into full link via make_link() function
@@ -182,6 +167,11 @@
         "videos/rounding_obs.mp4",
         "videos/searching_obs.mp4"
       ];
+
+      // create randomized list of whole numbers (0 to n), list length equal to # of observed videos
+      // to be used for shuffling video order
+      let video_count = unshuffled_short_observed.length;
+      let shuffled_array = shuffle(make_counting_array(video_count));
 
       // turn the observed video short links into long links
       let unshuffled_observed = make_link(unshuffled_short_observed);
@@ -205,7 +195,7 @@
         "<img src='screenshots/meeting_obs_sc.PNG' width='400' height='300'></img>",
         "<img src='screenshots/rounding_obs_sc.PNG' width='400' height='300'></img>",
         "<img src='screenshots/searching_obs_sc.PNG' width='400' height='300'></img>"
-      ]
+      ];
 
       // unshuffled list of shortened social feedback video links
       let unshuffled_social_short_videos = [
@@ -591,6 +581,15 @@
 
       // this method takes an array and shuffles it randomly
       // link to original post: https://github.com/Daplie/knuth-shuffle/blob/master/index.js
+      function make_counting_array(count) {
+        let new_array = [];
+
+        for (let i = 0; i < count; i++) {
+          new_array.push(i);
+        }
+        return new_array;
+      }
+
       function shuffle(array) {
         let currentIndex = array.length, temporaryValue, randomIndex;
 
