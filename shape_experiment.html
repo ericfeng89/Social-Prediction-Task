@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Action Perception Task</title>
+        <title>Shape Judgement Task</title>
         <script src="jspsych-6.0.5/jspsych.js"></script>
         <script src="jspsych-6.0.5/plugins/jspsych-html-keyboard-response.js"></script>
         <script src="jspsych-6.0.5/plugins/jspsych-image-keyboard-response.js"></script>
@@ -17,33 +17,13 @@
       // create timeline
       let timeline = [];
 
-      var six_digit_random = six_digit_random();
-
-      // assign a unique number to the participant
-      let enter_participant_id = {
-
-        // jsPsych specific: must enter the type of object
-        type: "html-keyboard-response",
-
-        // for "survey-text", there must be an array of questions in this format
-        stimulus: "Participant ID (please copy and paste to MTurk page, then press 'p' to continue): <br><br>"+ six_digit_random,
-
-        choices: ['p'],
-
-        // create additional property with key "test_part" for easy access later
-        data: {test_part: 'participant_id'}
-      }
-
-      // push object to timeline
-      timeline.push(enter_participant_id);
-
       let consent_form = {
         type: "survey-multi-choice",
         questions: [{prompt: "<b>Online Consent Form</b>"+
         "<br>"+
         "<p>Northeastern University, Department of Psychology. Affective and Brain Science Lab</p>"+
         "<p>Name of Investigator: Ajay B. Satpute, PhD</p>"+
-        "<p>Project Title: Action Perception<p>"+
+        "<p>Project Title: Shape Judgement<p>"+
         "<br>"+
         "<p>Thank you for volunteering for our study! You must be between the ages of 18-65, have normal or corrected-to-normal color vision and be a fluent speaker of English in order to participate. In addition, in order to work on this HIT you must have the Adult Content Qualification.</p>"
         +
@@ -68,8 +48,9 @@
         "<p>Your participation is completely voluntary, and you may choose to discontinue at any time without penalty. If you prefer not to participate or to discontinue participation, simply closer the browser at any time.</p>"
         +
         "<p>By clicking 'Yes, I provide consent to participate in this study' and pressing the 'OK' button, you assert that you understand the statement given above and consent to participate in the study. Please print out a copy of this consent form for your records or contact us if you would prefer an electronic copy of the consent.</p>"
-        +"<a href='https://www.dropbox.com/s/06npfczzlc1b4mg/ConsentForm.pdf?dl=0'>Consent Form .pdf</a>",
-        options: ['Yes, I provide consent to participate in the study']}],
+        +"<a target='_blank' rel='noopener noreferrer' href='consentform/ConsentForm.pdf'>Consent Form .pdf</a>",
+        options: ['Yes, I provide consent to participate in the study', 'No, I do NOT provide consent to participate in this study'],
+        required: true}],
         button_label: 'OK',
         data: {test_part: 'consent_form'}
       }
@@ -77,19 +58,21 @@
 
       let consent_response = {
         type: 'html-keyboard-response',
-        stimulus: 'You have not given consent to participate in this study. Therefore, you may not proceed.',
+        stimulus: '<p>You have NOT given consent to participate in this study. You may close this page now. Thank you for your time.</p>'+
+        '<br>'+
+          '<b>If this was a mistake, please reload the page!<b>',
         choices: jsPsych.NO_KEYS,
         trial_duration: function response_duration() {
 
           // get the user's response to whether or not they agree to the terms of the consent form
           let yes_or_no = jsPsych.data.get().filter({test_part: 'consent_form'}).select('responses').values[0];
 
-          // flash 1 millisecond screen if the user gives consent
-          if (yes_or_no == '{"Q0":""}') {
+          // return nothing if the user does not give consent (trial duration will be infinite by default)
+          if (yes_or_no == '{"Q0":"No, I do NOT provide consent to participate in this study"}') {
             return;
           }
 
-          // return nothing if the user does not give consent (trial duration will be infinite by default)
+          // flash 1 millisecond screen if the user gives consent
           return 1;
         },
         data: {test_part: 'consent_response'}
@@ -104,19 +87,48 @@
         type: "html-keyboard-response",
 
         // stimulus is the text displayed on the screen, prompts user
-        stimulus: "<p><b>Action Perception Task</b></p>" +
+        stimulus: "<p><b>Shape Judgement Task</b></p>" +
           "<p>Welcome to the experiment. Press any key to begin.</p>"
       }
       timeline.push(welcome);
 
-      // give instructions to the experiment
+      // give instructions to the arithmetic section
+      let arithmetic_instructions = {
+        type: "html-keyboard-response",
+        stimulus: "<p>This experiment will have two parts. In the first part, you will complete several rounds of simple tasks.</p>"+
+          "<p>To start, you will be asked to complete a set of basic arithmetic questions.</p>"+"<br>"+"<p>Press any key to begin.</p>",
+      }
+      timeline.push(arithmetic_instructions);
+
+      // prompt user with four simple arithmetic questions
+      let arithmetic_questions = {
+        type: "survey-multi-choice",
+        questions: [{prompt: "<u style='font-size:27px'>Evaluate the expressions below:</u><br><p style='font-size:23px'>8 + 3</p>", options: ['5', '11', '12', '24'], required: true},
+          {prompt: "<p style='font-size:23px'>7 x 6</p>", options: ['42', '56', '13', '35'], required: true},
+          {prompt: "<p style='font-size:23px'>10 ÷ 2</p>", options: ['2', '4', '5', '20'], required: true},
+          {prompt: "<p style='font-size:23px'>24 - 15</p>", options: ['39', '17', '7', '9'], required: true}],
+        data: {test_part: 'arithmetic_questions'}
+      }
+      timeline.push(arithmetic_questions);
+
+      // instructions for video rounds
       let instructions = {
         type: "html-keyboard-response",
-        stimulus: "<p>In this experiment, you will be shown a video consisting of moving shapes. Once the clip ends, you will be asked to predict the next movement of one of the shapes. Once you have made a prediction, the true outcome will be displayed on screen. You will then be asked to rate how much you expected the outcome. Finally, you will be asked to explain your answer to the previous question. This process will repeat 6 times.</p>"+
-          "<p>This task should take no longer than one hour to finish. However, you may take as much as you need.<p>"+"<br>"+
-          "<p>Press any key to continue.</p>",
+        stimulus: "<p>In the following rounds, you will perform a series of tasks, including:</p>"+
+        "<ol style='text-align:left;'>"+
+        "<br>"+
+          "<li>Watching the video displayed on screen.</li>"+
+          "<li>Once the video ends, predicting the next movement of the specified shape.</li>"+
+          "<li>Rating your confidence level of your prediction using a slider.</li>"+
+          "<li>Watching the video displayed on screen showing the shape's next movement.</li>"+
+          "<li>Rating how much you expected that outcome to happen using a slider.</li>"+
+          "<li>Providing an explanation for the previous question.</li>"+
+        "</ol>"+
+        "<br>"+
+        "<b>The next round will be a practice round.</b>"+
+        "<p>Press any key to continue.</p>",
       }
-      timeline.push(instructions);
+      timeline.push(instructions)
 
       // create fixation plus sign
       let fixation = {
@@ -127,14 +139,16 @@
         choices: jsPsych.NO_KEYS,
 
         // instead, the user must wait 2 seconds
-        trial_duration: 2000,
+        trial_duration: function(){
+            return jsPsych.randomization.sampleWithoutReplacement([1000, 1250, 1500, 1750, 2000, 2250, 2500, 2750, 3000], 1)[0];
+        },
         data: {test_part: 'fixation'}
       }
 
       // create screen right before beginning practice
       let practice_proceed = {
         type: "html-keyboard-response",
-        stimulus: "<p><b>This will be a practice round.</b></p>"+
+        stimulus: "<p><b>The practice round will now begin.</b></p>"+
           "<p>Press any key to continue.</p>"
       }
 
@@ -147,8 +161,8 @@
       // list of practice video durations (in milliseconds)
       // ~1000 added to each video length to compensate for video loading speed
       let practice_time_list = [
-        10500,
-        6700
+        11000,
+        7100
       ];
 
       // list of screenshots to be displayed after their respective observed videos
@@ -160,17 +174,47 @@
       // unshuffled list of shortened test video links
       // to be converted into full link via make_link() function
       let unshuffled_short_observed = [
-        "videos/bouncing_obs.mp4",
-        "videos/bumping_obs.mp4",
-        "videos/ignoring_obs.mp4",
-        "videos/meeting_obs.mp4",
-        "videos/rounding_obs.mp4",
-        "videos/searching_obs.mp4"
+        "videos/observed/1_arcs_obs.mp4",
+        "videos/observed/2_block_obs.mp4",
+        "videos/observed/3_diamond_obs.mp4",
+        "videos/observed/4_bowtie_obs.mp4",
+        "videos/observed/5_boxing_obs.mp4",
+        "videos/observed/6_suicides_obs.mp4",
+        "videos/observed/7_weaving_obs.mp4",
+        "videos/observed/8_catching_obs.mp4",
+        "videos/observed/9_circles_obs.mp4",
+        "videos/observed/10_clamshell_obs.mp4",
+        "videos/observed/11_fourway_obs.mp4",
+        "videos/observed/12_corner_obs.mp4",
+        "videos/observed/13_coneweave_obs.mp4",
+        "videos/observed/14_zigzag_obs.mp4",
+        "videos/observed/15_threeway_obs.mp4",
+        "videos/observed/16_triangle_obs.mp4",
+        "videos/observed/17_grabbing_obs.mp4",
+        "videos/observed/18_mirror_obs.mp4",
+        "videos/observed/19_heart_obs.mp4",
+        "videos/observed/20_hiding_obs.mp4",
+        "videos/observed/21_ignoring_obs.mp4",
+        "videos/observed/22_knight_obs.mp4",
+        "videos/observed/23_maze_obs.mp4",
+        "videos/observed/24_meeting_obs.mp4",
+        "videos/observed/25_square_obs.mp4",
+        "videos/observed/26_stairs_obs.mp4",
+        "videos/observed/27_steps_obs.mp4",
+        "videos/observed/28_pacing_obs.mp4",
+        "videos/observed/29_points_obs.mp4",
+        "videos/observed/30_rectangle_obs.mp4",
+        "videos/observed/31_ricochet_obs.mp4",
+        "videos/observed/32_rounding_obs.mp4",
+        "videos/observed/33_searching_obs.mp4",
+        "videos/observed/34_shuffle_obs.mp4",
+        "videos/observed/35_sighting_obs.mp4",
       ];
 
       // create randomized list of whole numbers (0 to n), list length equal to # of observed videos
       // to be used for shuffling video order
       let video_count = unshuffled_short_observed.length;
+
       let shuffled_array = shuffle(make_counting_array(video_count));
 
       // turn the observed video short links into long links
@@ -179,32 +223,201 @@
       // unshuffled list of test video times
       // ~1000 added to video length to compensate for video loading speed
       let unshuffled_observed_time_list = [
-        13000,
-        3400,
-        6200,
-        9000,
-        13200,
-        10000
+          6500,
+          6700,
+          5600,
+          5500,
+          5800,
+          10700,
+          5000,
+          4600,
+          5700,
+          8200,
+          6500,
+          2500,
+          6600,
+          5600,
+          6500,
+          11300,
+          6500,
+          18500,
+          6500,
+          5700,
+          6500,
+          5600,
+          6500,
+          8500,
+          10500,
+          3500,
+          4500,
+          7500,
+          5500,
+          3500,
+          7500,
+          12500,
+          9500,
+          10500,
+          2500
       ];
 
       // list of screenshots (last frame of the video)
       let unshuffled_screenshot_list = [
-        "<img src='screenshots/bouncing_obs_sc.PNG' width='400' height='300'></img>",
-        "<img src='screenshots/bumping_obs_sc.PNG' width='400' height='300'></img>",
-        "<img src='screenshots/ignoring_obs_sc.PNG' width='400' height='300'></img>",
-        "<img src='screenshots/meeting_obs_sc.PNG' width='400' height='300'></img>",
-        "<img src='screenshots/rounding_obs_sc.PNG' width='400' height='300'></img>",
-        "<img src='screenshots/searching_obs_sc.PNG' width='400' height='300'></img>"
+        "<img src='editedscreenshots/1_arcs.jpg' width='533' height='300' border='1'></img>",
+        "<img src='editedscreenshots/2_block.jpg' width='533' height='300' border='1'></img>",
+        "<img src='editedscreenshots/3_diamond.jpg' width='533' height='300' border='1'></img>",
+        "<img src='editedscreenshots/4_bowtie.jpg' width='533' height='300' border='1'></img>",
+        "<img src='editedscreenshots/5_boxing.png' width='533' height='300' border='1'></img>",
+        "<img src='editedscreenshots/6_suicides.jpg' width='533' height='300' border='1'></img>",
+        "<img src='editedscreenshots/7_weaving.jpg' width='533' height='300' border='1'></img>",
+        "<img src='editedscreenshots/8_catching.jpg' width='533' height='300' border='1'></img>",
+        "<img src='editedscreenshots/9_circles.jpg' width='533' height='300' border='1'></img>",
+        "<img src='editedscreenshots/10_clamshell.jpg' width='533' height='300' border='1'></img>",
+        "<img src='editedscreenshots/11_fourway.jpg' width='533' height='300' border='1'></img>",
+        "<img src='editedscreenshots/12_corner.jpg' width='533' height='300' border='1'></img>",
+        "<img src='editedscreenshots/13_coneweave.jpg' width='533' height='300' border='1'></img>",
+        "<img src='editedscreenshots/14_zigzag.jpg' width='533' height='300' border='1'></img>",
+        "<img src='editedscreenshots/15_threeway.jpg' width='533' height='300' border='1'></img>",
+        "<img src='editedscreenshots/16_triangle.jpg' width='533' height='300' border='1'></img>",
+        "<img src='editedscreenshots/17_grabbing.jpg' width='533' height='300' border='1'></img>",
+        "<img src='editedscreenshots/18_mirror.jpg' width='533' height='300' border='1'></img>",
+        "<img src='editedscreenshots/19_heart.png' width='533' height='300' border='1'></img>",
+        "<img src='editedscreenshots/20_hiding.jpg' width='533' height='300' border='1'></img>",
+        "<img src='editedscreenshots/21_ignoring.jpg' width='533' height='300' border='1'></img>",
+        "<img src='editedscreenshots/22_knight.jpg' width='533' height='300' border='1'></img>",
+        "<img src='editedscreenshots/23_maze.jpg' width='533' height='300' border='1'></img>",
+        "<img src='editedscreenshots/24_meeting.jpg' width='533' height='300' border='1'></img>",
+        "<img src='editedscreenshots/25_square.jpg' width='533' height='300' border='1'></img>",
+        "<img src='editedscreenshots/26_stairs.jpg' width='533' height='300' border='1'></img>",
+        "<img src='editedscreenshots/27_steps.jpg' width='533' height='300' border='1'></img>",
+        "<img src='editedscreenshots/28_pacing.jpg' width='533' height='300' border='1'></img>",
+        "<img src='editedscreenshots/29_points.jpg' width='533' height='300' border='1'></img>",
+        "<img src='editedscreenshots/30_rectangle.jpg' width='533' height='300' border='1'></img>",
+        "<img src='editedscreenshots/31_ricochet.jpg' width='533' height='300' border='1'></img>",
+        "<img src='editedscreenshots/32_rounding.jpg' width='533' height='300' border='1'></img>",
+        "<img src='editedscreenshots/33_searching.jpg' width='533' height='300' border='1'></img>",
+        "<img src='editedscreenshots/34_shuffle.jpg' width='533' height='300' border='1'></img>",
+        "<img src='editedscreenshots/35_sighting.jpg' width='533' height='300' border='1'></img>",
+      ];
+
+      // unshuffled list of shortened pattern feedback videos
+      let unshuffled_pattern_short_videos = [
+        "videos/pattern/1_arcs_pattern.mp4",
+        "videos/pattern/2_block_pattern.mp4",
+        "videos/pattern/3_diamond_pattern.mp4",
+        "videos/pattern/4_bowtie_pattern.mp4",
+        "videos/pattern/5_boxing_pattern.mp4",
+        "videos/pattern/6_suicides_pattern.mp4",
+        "videos/pattern/7_weaving_pattern.mp4",
+        "videos/pattern/8_catching_pattern.mp4",
+        "videos/pattern/9_circles_pattern.mp4",
+        "videos/pattern/10_clamshell_pattern.mp4",
+        "videos/pattern/11_fourway_pattern.mp4",
+        "videos/pattern/12_corner_pattern.mp4",
+        "videos/pattern/13_coneweave_pattern.mp4",
+        "videos/pattern/14_zigzag_pattern.mp4",
+        "videos/pattern/15_threeway_pattern.mp4",
+        "videos/pattern/16_triangle_pattern.mp4",
+        "videos/pattern/17_grabbing_pattern.mp4",
+        "videos/pattern/18_mirror_pattern.mp4",
+        "videos/pattern/19_heart_pattern.mp4",
+        "videos/pattern/20_hiding_pattern.mp4",
+        "videos/pattern/21_ignoring_pattern.mp4",
+        "videos/pattern/22_knight_pattern.mp4",
+        "videos/pattern/23_maze_pattern.mp4",
+        "videos/pattern/24_meeting_pattern.mp4",
+        "videos/pattern/25_square_pattern.mp4",
+        "videos/pattern/26_stairs_pattern.mp4",
+        "videos/pattern/27_steps_pattern.mp4",
+        "videos/pattern/28_pacing_pattern.mp4",
+        "videos/pattern/29_points_pattern.mp4",
+        "videos/pattern/30_rectangle_pattern.mp4",
+        "videos/pattern/31_ricochet_pattern.mp4",
+        "videos/pattern/32_rounding_pattern.mp4",
+        "videos/pattern/33_searching_pattern.mp4",
+        "videos/pattern/34_shuffle_pattern.mp4",
+        "videos/pattern/35_sighting_pattern.mp4",
+      ];
+
+      // turn the pattern feedback short links into long links
+      let unshuffled_pattern_feedback_videos = make_link(unshuffled_pattern_short_videos);
+
+      // unshuffled list of pattern feedback video times
+      // ~1000 added to video length to compensate for video loading speed
+      let unshuffled_pf_time_list = [
+        5000,
+        4000,
+        6000,
+        7800,
+        5500,
+        6000,
+        6000,
+        4000,
+        6000,
+        7000,
+        3000,
+        3000,
+        6000,
+        6000,
+        5000,
+        5000,
+        2500,
+        7500,
+        5500,
+        4500,
+        3500,
+        3500,
+        5500,
+        4500,
+        5500,
+        3500,
+        2500,
+        5500,
+        5500,
+        3500,
+        2500,
+        8500,
+        5500,
+        2500,
+        2500
       ];
 
       // unshuffled list of shortened social feedback video links
       let unshuffled_social_short_videos = [
-        "videos/bouncing_social.mp4",
-        "videos/bumping_social.mp4",
-        "videos/ignoring_social.mp4",
-        "videos/meeting_social.mp4",
-        "videos/rounding_social.mp4",
-        "videos/searching_social.mp4"
+        "videos/social/1_arcs_social.mp4",
+        "videos/social/2_block_social.mp4",
+        "videos/social/3_diamond_social.mp4",
+        "videos/social/4_bowtie_social.mp4",
+        "videos/social/5_boxing_social.mp4",
+        "videos/social/6_suicides_social.mp4",
+        "videos/social/7_weaving_social.mp4",
+        "videos/social/8_catching_social.mp4",
+        "videos/social/9_circles_social.mp4",
+        "videos/social/10_clamshell_social.mp4",
+        "videos/social/11_fourway_social.mp4",
+        "videos/social/12_corner_social.mp4",
+        "videos/social/13_coneweave_social.mp4",
+        "videos/social/14_zigzag_social.mp4",
+        "videos/social/15_threeway_social.mp4",
+        "videos/social/16_triangle_social.mp4",
+        "videos/social/17_grabbing_social.mp4",
+        "videos/social/18_mirror_social.mp4",
+        "videos/social/19_heart_social.mp4",
+        "videos/social/20_hiding_social.mp4",
+        "videos/social/21_ignoring_social.mp4",
+        "videos/social/22_knight_social.mp4",
+        "videos/social/23_maze_social.mp4",
+        "videos/social/24_meeting_social.mp4",
+        "videos/social/25_square_social.mp4",
+        "videos/social/26_stairs_social.mp4",
+        "videos/social/27_steps_social.mp4",
+        "videos/social/28_pacing_social.mp4",
+        "videos/social/29_points_social.mp4",
+        "videos/social/30_rectangle_social.mp4",
+        "videos/social/31_ricochet_social.mp4",
+        "videos/social/32_rounding_social.mp4",
+        "videos/social/33_searching_social.mp4",
+        "videos/social/34_shuffle_social.mp4",
+        "videos/social/35_sighting_social.mp4",
       ];
 
       // turn social feedback short links into long links
@@ -213,36 +426,41 @@
       // unshuffled list of social feedback video times
       // ~1000 added to video length to compensate for video loading speed
       let unshuffled_sf_time_list = [
+        4500,
+        2000,
+        2500,
+        2000,
+        4000,
         3500,
-        2700,
-        4000,
         3000,
-        4000,
-        3000
-      ];
-
-      // unshuffled list of shortened pattern feedback videos
-      let unshuffled_pattern_short_videos = [
-        "videos/bouncing_pattern.mp4",
-        "videos/bumping_pattern.mp4",
-        "videos/ignoring_pattern.mp4",
-        "videos/meeting_pattern.mp4",
-        "videos/rounding_pattern.mp4",
-        "videos/searching_pattern.mp4"
-      ];
-
-      // turn the pattern feedback short links into long links
-      let unshuffled_pattern_feedback_videos = make_link(unshuffled_pattern_short_videos)
-
-      // unshuffled list of pattern feedback video times
-      // ~1000 added to video length to compensate for video loading speed
-      let unshuffled_pf_time_list = [
+        2000,
+        2000,
         5000,
+        2000,
+        2000,
+        2000,
+        2000,
+        2000,
+        3000,
+        2000,
+        2000,
+        2000,
+        2000,
         3000,
         2000,
         3000,
-        9000,
-        4500
+        2000,
+        2000,
+        2000,
+        1000,
+        2000,
+        2000,
+        2000,
+        3000,
+        4000,
+        3000,
+        2000,
+        1000
       ];
 
       // calls match_with_array function
@@ -251,15 +469,15 @@
       let observed_videos = match_with_array(shuffled_array, unshuffled_observed);
       let observed_time_list = match_with_array(shuffled_array, unshuffled_observed_time_list);
       let screenshot_list = match_with_array(shuffled_array, unshuffled_screenshot_list);
-      let social_feedback_videos = match_with_array(shuffled_array, unshuffled_social_feedback_videos);
-      let sf_time_list = match_with_array(shuffled_array, unshuffled_sf_time_list);
       let pattern_feedback_videos = match_with_array(shuffled_array, unshuffled_pattern_feedback_videos);
       let pf_time_list = match_with_array(shuffled_array, unshuffled_pf_time_list);
+      let social_feedback_videos = match_with_array(shuffled_array, unshuffled_social_feedback_videos);
+      let sf_time_list = match_with_array(shuffled_array, unshuffled_sf_time_list);
 
       // these three calls shuffle the SHORTENED links - this is necessary for the experiment_data() function for readability
       let shuffled_short_observed = match_with_array(shuffled_array, unshuffled_short_observed);
-      let shuffled_social_short_videos = match_with_array(shuffled_array, unshuffled_social_short_videos);
       let shuffled_pattern_short_videos = match_with_array(shuffled_array, unshuffled_pattern_short_videos);
+      let shuffled_social_short_videos = match_with_array(shuffled_array, unshuffled_social_short_videos);
 
       // create random number, either 0 or 1, used for practice section
       let randomization1 = Math.floor((Math.random() * 2));
@@ -270,7 +488,7 @@
       // create object: multiple choice practice question
       let practice_question = {
         type: "survey-multi-choice",
-        questions: [{prompt: practice_screenshot_list[randomization1]+"<p>Where will the <font color='MediumSeaGreen'>GREEN</font> square go next?</p>", options: question_options, required: true}],
+        questions: [{prompt: "<nobr><font color='white'>___</font></nobr>"+practice_screenshot_list[randomization1]+"<p>Where will the <font color='MediumSeaGreen'>GREEN</font> square go next?</p>", options: question_options, required: true}],
         data: {test_part: 'practice_question'}
       }
 
@@ -314,14 +532,24 @@
         trial_duration: 1
       }
 
+      let confidence = {
+        type: "html-slider-response",
+        stimulus: "How confident are you in your prediction?",
+
+        // labels the slider
+        labels: ["not at all confident", "very confident"],
+        slider_width: 8000,
+        data: {test_part: 'confidence'}
+      }
+
       // rate level of surprise using a slider
       let slider = {
         type: "html-slider-response",
         stimulus: "How expected was that outcome?",
 
         // labels the slider
-        labels: ["very unexpected", "very expected"],
-        slider_width: 4000,
+        labels: ["not at all expected", "very expected"],
+        slider_width: 8000,
         data: {test_part: 'slider'}
       }
 
@@ -330,6 +558,14 @@
         type: "survey-text",
         questions: [{prompt: "Please explain your answer.", rows:3}],
         data: {test_part: 'explanation'}
+      }
+
+      let feedback_cue = {
+        type: 'html-keyboard-response',
+        stimulus: "<p style='font-size:30px'><b>This is what actually happened...</b></p>"+"<br><br><br><br><br>",
+        // user cannot press any keys to continue
+        choices: jsPsych.NO_KEYS,
+        trial_duration: 2000
       }
 
       // create video object for the practice round
@@ -354,7 +590,7 @@
       let test_intro = {
         type: "html-keyboard-response",
         stimulus: "<p><b>The practice round has ended. The task will now begin.</b></p>"+
-          "<p>Press any key to continue</p>"
+          "<p>Press any key to continue.</p>"
       }
       timeline.push(test_intro);
 
@@ -369,6 +605,8 @@
         feedback_videos,
         randomization1,
         screenshot_list,
+        confidence,
+        feedback_cue,
         slider,
         explanation,
         observed_time_list,
@@ -383,6 +621,24 @@
       }
       timeline.push(test_trials);
 
+      var six_digit_random = six_digit_random();
+
+      // assign a unique number to the participant
+      let enter_participant_id = {
+
+        // jsPsych specific: must enter the type of object
+        type: "html-keyboard-response",
+
+        // for "survey-text", there must be an array of questions in this format
+        stimulus: "Congratulations! You have completed all of the completed trials for part 1. Please copy and paste this 6-digit code to the MTurk page, then press 'p' to continue: <br><br>"+ six_digit_random,
+
+        choices: ['p'],
+
+        // create additional property with key "test_part" for easy access later
+        data: {test_part: 'participant_id'}
+      }
+      timeline.push(enter_participant_id);
+
       // end screen
       let end_screen = {
         type: "html-keyboard-response",
@@ -393,7 +649,8 @@
 
           // send data to s3 bucket
           send_data(id);
-          return "<p>Congratulations, you have completed part 1 of the experiment. Click the link below for part 2.</p>"+"<a href='https://neu.co1.qualtrics.com/jfe/form/SV_80J3UhoUJ013LbT'>https://neu.co1.qualtrics.com/jfe/form/SV_80J3UhoUJ013LbT</a>";
+
+          return "<p>Thank you for completing part 1 of the experiment. Please click the link below for part 2.</p>"+"<a href='https://neu.co1.qualtrics.com/jfe/form/SV_80J3UhoUJ013LbT'>https://neu.co1.qualtrics.com/jfe/form/SV_80J3UhoUJ013LbT</a>";
         },
         choices: jsPsych.NO_KEYS
       }
@@ -416,6 +673,8 @@
         feedback_videos,
         randomization1,
         screenshot_list,
+        confidence,
+        feedback_cue,
         slider,
         explanation,
         observed_time_list,
@@ -450,7 +709,7 @@
           // create object: multiple choice test question
           let question = {
             type: "survey-multi-choice",
-            questions: [{prompt: screenshot_list[i]+"<p>Where will the <font color='MediumSeaGreen'>GREEN</font> square go next?</p>", options: question_options, required: true}],
+            questions: [{prompt: "<nobr><font color='white'>___-</font></nobr>"+screenshot_list[i]+"<p>Where will the <font color='MediumSeaGreen'>GREEN</font> square go next?</p>", options: question_options, required: true}],
             data: {test_part: 'question'}
           }
 
@@ -501,6 +760,12 @@
           }
           logistics_timeline.push(other);
 
+          // confidence level slider
+          logistics_timeline.push(confidence);
+
+          // cue feedback video
+          logistics_timeline.push(feedback_cue);
+
           // if the random number is 0 -- the videos are all social
           if (randomization1 == 0) {
 
@@ -548,6 +813,11 @@
       // function that makes and combines numerous JSON objects into a list containing 6 keys each (using data)
       function experiment_data() {
 
+        let arithmetic_perfection = "no";
+        if (jsPsych.data.get().filter({test_part: 'arithmetic_questions'}).select('responses').values[0] == '{"Q0":"11","Q1":"42","Q2":"5","Q3":"9"}') {
+          arithmetic_perfection = "yes";
+        }
+
         // define timeline of JSON objects
         let trial_timeline = [];
         for (let i = 0; i < observed_videos.length; i++) {
@@ -558,14 +828,18 @@
             // .filter() filters the data so that it will only return trials that are part of the certain "test_part", returning an array of JSON obj
             // .select() selects the particular key within the trials
             // .values gets the value of the corresponding key in an array, so the [i] is needed
+            "arithmetic_responses": jsPsych.data.get().filter({test_part: 'arithmetic_questions'}).select('responses').values[0],
+            "perfect_arithmetic_score": arithmetic_perfection,
             "video_url": shuffled_short_observed[i],
             "answer_to_question":jsPsych.data.get().filter({test_part: 'question'}).select('responses').values[i],
             "other_explanation": jsPsych.data.get().filter({test_part: 'other'}).select('responses').values[i],
 
             // calls function that returns either the shuffled social or pattern SHORT arrays, depending on randomization1
             "feedback_url": social_or_pattern(i),
-            "slider_value":jsPsych.data.get().filter({test_part: 'slider'}).select('response').values[i],
-            "slider_explanation":jsPsych.data.get().filter({test_part: 'explanation'}).select('responses').values[i]
+
+            "confidence_slider_value":jsPsych.data.get().filter({test_part: 'confidence'}).select('response').values[i],
+            "expectation_slider_value":jsPsych.data.get().filter({test_part: 'slider'}).select('response').values[i],
+            "expectation_slider_explanation":jsPsych.data.get().filter({test_part: 'explanation'}).select('responses').values[i]
           }
           trial_timeline.push(json);
         }
@@ -611,7 +885,7 @@
       function make_link(array) {
         let new_array = [];
         let part_1 = "<div style='border:1px solid black;'><video src="
-        let part_2 = " width='400' height='300' autoplay='1'>Error: your browser does not support this!</video></div>"+"<br><br><br><br><br><br><br><br>"
+        let part_2 = " width='533' height='300' autoplay='1'>Error: your browser does not support this!</video></div>"+"<br><br><br><br><br><br><br>"
 
         for (let i = 0; i < array.length; i++) {
 
@@ -644,7 +918,7 @@
         let xhr = new XMLHttpRequest();
 
         // (method, url, asynchronous(y/n))
-        xhr.open("POST", "https://7k5k1tu2bl.execute-api.us-east-1.amazonaws.com/Production/SaveData", true);
+        xhr.open("POST", "https://tyg3lxdvqj.execute-api.us-east-1.amazonaws.com/beta/socialpredictionapi", true);
         xhr.setRequestHeader('Content-Type', "application/x-www-form-urlencoded; charset=UTF-8");
 
         // JSON.stringify turns a non-string into a string so that it can be sent to the bucket

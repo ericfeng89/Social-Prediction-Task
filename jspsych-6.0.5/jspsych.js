@@ -730,7 +730,7 @@ window.jsPsych = (function() {
         if (typeof trial_type == 'undefined') {
           console.error('Trial level node is missing the "type" parameter. The parameters for the node are: ' + JSON.stringify(parameters));
         } else if ((typeof jsPsych.plugins[trial_type] == 'undefined') && (trial_type.toString().replace(/\s/g,'') != "function(){returntimeline.timelineVariable(varname);}")) {
-          console.error('No plugin loaded for trials of type "' + trial_type + '"');
+//          console.error('No plugin loaded for trials of type "' + trial_type + '"');
         }
         // create a deep copy of the parameters for the trial
         trial_parameters = Object.assign({}, parameters);
