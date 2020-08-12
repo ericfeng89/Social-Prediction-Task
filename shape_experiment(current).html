@@ -914,7 +914,7 @@
             "other_response": jsPsych.data.get().filter({test_part: 'other'}).select('responses').values[i],
             "confidence_slider_value":jsPsych.data.get().filter({test_part: 'confidence'}).select('response').values[i],
 
-            // calls function that returns either the shuffled social or pattern SHORT arrays, depending on randomization1
+            // calls function that returns URL of feedback video
             "feedback_url": social_or_pattern(i),
 
             "prediction_rationale":jsPsych.data.get().filter({test_part: 'prediction_rationale'}).select('responses').values[i],
