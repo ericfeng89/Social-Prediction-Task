@@ -911,12 +911,12 @@
             "trial_number": counting_array[i],
             "video_url": shuffled_short_observed[i],
             "answer_to_question":jsPsych.data.get().filter({test_part: 'question'}).select('responses').values[i],
-            "other_situation_rationale": jsPsych.data.get().filter({test_part: 'other'}).select('responses').values[i],
+            "other_response": jsPsych.data.get().filter({test_part: 'other'}).select('responses').values[i],
+            "confidence_slider_value":jsPsych.data.get().filter({test_part: 'confidence'}).select('response').values[i],
 
             // calls function that returns either the shuffled social or pattern SHORT arrays, depending on randomization1
             "feedback_url": social_or_pattern(i),
 
-            "confidence_slider_value":jsPsych.data.get().filter({test_part: 'confidence'}).select('response').values[i],
             "prediction_rationale":jsPsych.data.get().filter({test_part: 'prediction_rationale'}).select('responses').values[i],
             "expectation_slider_value":jsPsych.data.get().filter({test_part: 'expectation_slider'}).select('response').values[i],
             "situation_rationale":jsPsych.data.get().filter({test_part: 'situation_rationale'}).select('responses').values[i]
